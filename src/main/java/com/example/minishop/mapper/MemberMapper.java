@@ -1,10 +1,7 @@
 package com.example.minishop.mapper;
 
 import com.example.minishop.model.Member;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -17,10 +14,10 @@ public interface MemberMapper {
     @Select("select count(*) from member where userid = #{userid}")
     int countMembersById(String userid);
 
-    @Select("select * from member where userid = #{userid} and passwd = ${passwd}")
-    Member findMemberByIdAndPasswd(String userid, String passwd);
+    @Select("select * from member where userid = #{userid} and passwd = #{passwd}")
+    Member findMemberByIdAndPasswd(@Param("userid") String userid, @Param("passwd") String passwd);
 
-    @Insert("insert into member values (#{userid}, #{username}, #{passwd}, #{post}, #{addr1}, #{addr2}, #{phone1}, #{phone2}, #{phone3}, #{email1}, #{email2})")
+    @Insert("insert into member values (#{userid}, #{passwd}, #{username}, #{post}, #{addr1}, #{addr2}, #{phone1}, #{phone2}, #{phone3}, #{email1}, #{email2})")
     int insertMember(Member member);
 
     @Update("update member " +
