@@ -16,6 +16,9 @@
                 <a class="nav-link" href="${pageContext.request.contextPath}/mypage.do"><i class="material-icons">account_circle</i></a>
             </li>
             <li class="nav-item mx-2 mx-lg-0">
+                <a class="nav-link" href="${pageContext.request.contextPath}/order.do"><i class="material-icons">receipt</i></a>
+            </li>
+            <li class="nav-item mx-2 mx-lg-0">
                 <a class="nav-link" href="${pageContext.request.contextPath}/mycart.do"><i class="material-icons">shopping_cart</i></a>
             </li>
         </ul>
