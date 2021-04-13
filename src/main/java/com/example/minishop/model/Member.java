@@ -1,11 +1,14 @@
 package com.example.minishop.model;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
-@ToString
+@Builder
 public class Member {
     private String userid;
     private String username;

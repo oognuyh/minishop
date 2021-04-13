@@ -4,6 +4,8 @@ import com.example.minishop.mapper.MemberMapper;
 import com.example.minishop.model.Member;
 import org.apache.ibatis.session.SqlSession;
 
+import java.util.Optional;
+
 public class MemberDao {
 
     public int insertMember(SqlSession session, Member member) {
@@ -18,7 +20,7 @@ public class MemberDao {
         return session.getMapper(MemberMapper.class).updateMember(member);
     }
 
-    public Member findMemberByIdAndPasswd(SqlSession session, String userid, String passwd) {
+    public Optional<Member> findMemberByIdAndPasswd(SqlSession session, String userid, String passwd) {
         return session.getMapper(MemberMapper.class).findMemberByIdAndPasswd(userid, passwd);
     }
 }
