@@ -1,5 +1,6 @@
 package com.example.minishop.controller.auth;
 
+import com.example.minishop.model.Member;
 import com.example.minishop.service.MemberService;
 
 import javax.servlet.ServletException;
@@ -25,12 +26,14 @@ public class SignInServlet extends HttpServlet {
         HttpSession session = request.getSession();
         String userid = request.getParameter("userid");
         String passwd = request.getParameter("passwd");
-        String destination = Optional.of(request.getParameter("destination")).orElseGet(() -> "home");
+        String destination = request.getHeader("referer");
+        Optional<Member> member = memberService.signIn(userid, passwd);
 
-        System.out.println(destination);
-
-        memberService.signIn(userid, passwd).ifPresent(member -> session.setAttribute("member", member));
-
-        response.sendRedirect("/" + destination + ".do");
+        if (member.isPresent()) {
+            session.setAttribute("member", member.get());
+            response.sendRedirect(destination.equals(request.getRequestURL().toString()) ? "/home.do" : destination);
+        } else {
+            response.sendRedirect(destination);
+        }
     }
 }
