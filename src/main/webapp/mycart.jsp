@@ -16,10 +16,11 @@
                     <div class="mb-3">
                         <div class="pt-4 wish-list">
 
-                            <h5 class="mb-4">Cart (<span>{{carts.length}}</span> items)</h5>
+                            <h5 class="mb-4">
+                                Cart (<span>{{ carts.length }}</span> items)
+                            </h5>
 
                             <div class="row mb-4" v-for="(cart, idx) in carts">
-
                                 <div class="col-md-5 col-lg-3 col-xl-3">
                                     <div class="mb-md-0 p-3">
                                         <img class="img-fluid w-100"
@@ -31,9 +32,9 @@
                                     <div>
                                         <div class="d-flex justify-content-between">
                                             <div>
-                                                <h5>{{cart.gName}}</h5>
-                                                <p class="mb-2 text-muted text-uppercase small">Color: {{cart.gColor}}</p>
-                                                <p class="mb-3 text-muted text-uppercase small">Size: {{cart.gSize}}</p>
+                                                <h5>{{ cart.gName }}</h5>
+                                                <p class="mb-2 text-muted text-uppercase small">Color: {{ cart.gColor }}</p>
+                                                <p class="mb-3 text-muted text-uppercase small">Size: {{ cart.gSize }}</p>
                                             </div>
                                             <div>
                                                 <div class="def-number-input number-input safari_only mb-0 w-100">
@@ -52,7 +53,7 @@
                                                 <button class="btn btn-danger btn-sm text-uppercase mr-3" @click="removeCart(cart)">
                                                     <i class="material-icons" style="vertical-align: middle; padding-bottom: 3px">delete</i> Remove item </button>
                                             </div>
-                                            <p class="mb-0"><span><strong id="summary">&#8361; {{cart.gPrice}}</strong></span></p>
+                                            <p class="mb-0"><span><strong id="summary">&#8361; {{ cart.gPrice }}</strong></span></p>
                                         </div>
                                     </div>
                                 </div>
@@ -94,7 +95,7 @@
                             <ul class="list-group list-group-flush">
                                 <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
                                     Temporary amount
-                                    <span>&#8361; {{getTotalAmount}}</span>
+                                    <span>&#8361; {{ getTotalAmount }}</span>
                                 </li>
                                 <li class="list-group-item d-flex justify-content-between align-items-center px-0">
                                     Shipping
@@ -107,7 +108,7 @@
                                             <p class="mb-0">(including VAT)</p>
                                         </strong>
                                     </div>
-                                    <span><strong>&#8361; {{getTotalAmount}}</strong></span>
+                                    <span><strong>&#8361; {{ getTotalAmount }}</strong></span>
                                 </li>
                             </ul>
 
@@ -128,10 +129,7 @@
         const app = new Vue({
             el: "#app",
             data: {
-                carts: []
-            },
-            created: function () {
-                this.carts = carts;
+                carts: carts
             },
             computed: {
                 getTotalAmount: function () {
@@ -169,7 +167,6 @@
                 },
                 removeCart: function (cart) {
                     this.carts = this.carts.filter((c) => c !== cart);
-                    console.log(this.carts);
                     $.post({
                         url: "/mycart.do",
                         data: {
@@ -182,7 +179,20 @@
                     })
                 },
                 moveToCheckOut: function () {
-                    location.href = "/checkout.do";
+                    if (this.carts.length > 0) {
+                        $.post({
+                            url: "/checkout.do",
+                            data: {
+                                carts: JSON.stringify(carts)
+                            },
+                            complete: ({responseText}) => {
+                                if (responseText === "success")
+                                    location.href = "/checkout.do";
+                            }
+                        })
+                    } else {
+                        alert("Your cart is empty.")
+                    }
                 }
             }
         })
