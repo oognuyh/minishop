@@ -1,4 +1,4 @@
-package com.example.minishop.controller;
+package com.example.minishop.controller.mypage;
 
 import com.example.minishop.model.Member;
 import com.example.minishop.service.MemberService;
@@ -20,8 +20,11 @@ public class MyPageServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
         Optional<Member> member = Optional.ofNullable((Member) session.getAttribute("member"));
-        String destination = member.isPresent() ? "mypage.jsp" : "signin.jsp";
+        String destination = member.isPresent() ? "mypage.jsp" : "signin.do";
 
+        System.out.println("MyPageServlet - doGet() : " + destination);
+
+        request.setAttribute("destination", "mypage");
         request.getRequestDispatcher(destination).forward(request, response);
     }
 
