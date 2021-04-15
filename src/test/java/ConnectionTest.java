@@ -1,7 +1,9 @@
 import com.example.minishop.config.OracleProperties;
+import com.example.minishop.factory.OracleSqlSessionFactory;
 import com.example.minishop.mapper.MemberMapper;
 import com.example.minishop.model.Member;
-import com.example.minishop.factory.OracleSqlSessionFactory;
+import com.example.minishop.service.GoodsService;
+import com.example.minishop.service.MemberService;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
 import org.yaml.snakeyaml.Yaml;
@@ -11,15 +13,15 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 public class ConnectionTest {
+
     @Test
     public void connection() {
-
         try (SqlSession session = OracleSqlSessionFactory.getSession()) {
             MemberMapper mapper = session.getMapper(MemberMapper.class);
             mapper.insertMember(new Member("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"));
-            mapper.fetchAllMembers().forEach(System.out::println);
+            mapper.findAllMembers().forEach(System.out::println);
             int i = mapper.updateMember(new Member("1", "332", "3", "4", "5", "6", "7", "8", "9", "10", "11"));
-            mapper.fetchAllMembers().forEach(System.out::println);
+            mapper.findAllMembers().forEach(System.out::println);
             System.out.println(i);
 
             session.selectList("com.example.minishop.mapper.MemberMapper.fetchAllMembers").forEach(System.out::println);
@@ -27,6 +29,18 @@ public class ConnectionTest {
         }
     }
 
+    @Test
+    public void fetchingGoods() {
+        GoodsService goodsService = new GoodsService();
+
+        goodsService.findGoodsByGCategory("d").ifPresent(goods -> goods.forEach(System.out::println));
+    }
+
+    @Test
+    public void signIn() {
+        MemberService memberService = new MemberService();
+        memberService.signIn("oognuyh", "124").ifPresent(System.out::println);
+    }
 
     @Test
     public void loadYaml() throws FileNotFoundException {
