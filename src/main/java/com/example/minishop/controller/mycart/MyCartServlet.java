@@ -25,7 +25,8 @@ public class MyCartServlet extends HttpServlet {
         Optional<Member> member = Optional.ofNullable((Member) session.getAttribute("member"));
         Gson gson = new Gson();
 
-        member.flatMap(m -> cartService.findCartsByUserId(m.getUserid())).ifPresent(carts -> request.setAttribute("carts", gson.toJson(carts)));
+        member.map(m -> cartService.findCartsByUserId(m.getUserid())).ifPresent(carts -> request.setAttribute("carts", gson.toJson(carts)));
+
         request.getRequestDispatcher(member.isPresent() ? "mycart.jsp" : "signin.do").forward(request, response);
     }
 
@@ -44,8 +45,6 @@ public class MyCartServlet extends HttpServlet {
             out.print("signin");
             return;
         }
-
-        System.out.println("MyCartServlet.doPost() - cart: " + cart);
 
         switch (action) {
             case "add":
