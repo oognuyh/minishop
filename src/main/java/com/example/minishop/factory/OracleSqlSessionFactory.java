@@ -1,10 +1,6 @@
 package com.example.minishop.factory;
 
 import com.example.minishop.config.OracleProperties;
-import com.example.minishop.mapper.CartMapper;
-import com.example.minishop.mapper.GoodsMapper;
-import com.example.minishop.mapper.MemberMapper;
-import com.example.minishop.mapper.OrderMapper;
 import org.apache.ibatis.datasource.pooled.PooledDataSource;
 import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.session.Configuration;
@@ -42,10 +38,8 @@ public class OracleSqlSessionFactory {
         Environment environment = new Environment("development", transactionFactory, dataSource);
         Configuration configuration = new Configuration(environment);
 
-        configuration.addMapper(MemberMapper.class);
-        configuration.addMapper(GoodsMapper.class);
-        configuration.addMapper(CartMapper.class);
-        configuration.addMapper(OrderMapper.class);
+        configuration.setMapUnderscoreToCamelCase(true);
+        configuration.addMappers("com.example.minishop.mapper");
 
         sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);
     }
