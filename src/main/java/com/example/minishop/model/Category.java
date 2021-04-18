@@ -4,16 +4,17 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Goods {
-    private String gCode;
-    private String gCategory;
-    private String gName;
-    private String gContent;
-    private int gPrice;
-    private String gImage;
+@Accessors(chain = true)
+public class Category {
+    // 고유번호
+    private int id;
+
+    // 카테고리 이름
+    private String name;
 }
