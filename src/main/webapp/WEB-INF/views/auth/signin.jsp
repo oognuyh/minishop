@@ -2,9 +2,9 @@
 <!DOCTYPE html>
 <html>
     <!-- Common Head -->
-    <jsp:include page="common/head.jsp" />
+    <jsp:include page="/WEB-INF/views/common/head.jsp" />
 <body class="vh-100">
-    <jsp:include page="common/nav.jsp" />
+    <jsp:include page="/WEB-INF/views/common/nav.jsp" />
 
     <div class="container h-75">
         <div class="row h-100 align-items-center">
@@ -13,26 +13,23 @@
                     <div class="card-body">
                         <h5 class="card-title text-center">Sign In</h5>
 
-                        <form class="form-signin" action="signin.do" method="post">
-                            <input hidden name="destination" value="<%= request.getAttribute("destination") %>">
-
+                        <form class="form-signin" action="signin" method="post">
                             <div class="input-group col-lg-12 mb-4">
                                 <div class="input-group-prepend">
                                         <span class="input-group-text bg-white border-md border-right-0">
                                             <i class="material-icons text-muted">person</i>
                                         </span>
                                 </div>
-                                <input id="userid" type="text" name="userid" placeholder="ID" class="form-control bg-white border-left-0 border-md">
+                                <input id="id" type="text" name="id" placeholder="ID" class="form-control bg-white border-left-0 border-md">
                             </div>
 
-                            <!-- Password -->
                             <div class="input-group col-lg-12 mb-4">
                                 <div class="input-group-prepend">
                                         <span class="input-group-text bg-white border-md border-right-0">
                                             <i class="material-icons text-muted">lock</i>
                                         </span>
                                 </div>
-                                <input id="passwd" type="password" name="passwd" placeholder="Password" class="form-control bg-white border-left-0 border-md">
+                                <input id="password" type="password" name="password" placeholder="Password" class="form-control bg-white border-left-0 border-md">
                             </div>
 
                             <button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Sign in</button>
@@ -46,7 +43,9 @@
 
                             <!-- Already Registered -->
                             <div class="text-center w-100">
-                                <p class="text-muted font-weight-bold">Dont't have a account? <a href="signup.jsp" class="text-primary ml-2 text-decoration-none text-uppercase">Register here</a></p>
+                                <p class="text-muted font-weight-bold">Dont't have a account?
+                                    <a href="${pageContext.request.contextPath}/signup" class="text-primary ml-2 text-decoration-none text-uppercase">Register here</a>
+                                </p>
                             </div>
                         </form>
                     </div>

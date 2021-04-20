@@ -1,5 +1,7 @@
 package com.example.minishop.controller.auth;
 
+import com.example.minishop.util.Path;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -8,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-@WebServlet("/signout.do")
+@WebServlet("/signout")
 public class SignOutServlet extends HttpServlet {
 
     @Override
@@ -17,6 +19,6 @@ public class SignOutServlet extends HttpServlet {
 
         session.invalidate();
 
-        response.sendRedirect("home.do");
+        response.sendRedirect(Path.HOME);
     }
 }
