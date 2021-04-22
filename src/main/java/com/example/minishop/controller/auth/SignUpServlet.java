@@ -3,7 +3,6 @@ package com.example.minishop.controller.auth;
 import com.example.minishop.model.Member;
 import com.example.minishop.service.MemberService;
 import com.example.minishop.util.Path;
-import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.ServletException;
@@ -20,7 +19,6 @@ import java.util.Optional;
 @WebServlet("/signup")
 public class SignUpServlet extends HttpServlet {
     private final MemberService memberService = new MemberService();
-    private final Gson gson = new Gson();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -29,7 +27,7 @@ public class SignUpServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.setCharacterEncoding("utf-8"); 
+        request.setCharacterEncoding("utf-8");
         HttpSession session = request.getSession();
         Member member = Member.builder()
                 .name(request.getParameter("name"))
@@ -45,7 +43,7 @@ public class SignUpServlet extends HttpServlet {
 
         Optional<Member> optionalMember = memberService.signUp(member);
         if (optionalMember.isPresent()) {
-            session.setAttribute("member", gson.toJson(optionalMember.get()));
+            session.setAttribute("member", optionalMember.get());
             response.sendRedirect(Path.HOME);
         } else {
             response.sendRedirect(Path.SIGN_UP);

@@ -25,6 +25,5 @@ public class DuplicateCheckServlet extends HttpServlet {
 
         optionalEmail.ifPresent(email -> out.print(memberService.isDuplicateEmail(email) ? "duplicate" : "unique"));
         optionalPhoneNumber.ifPresent(phoneNumber -> out.print(memberService.isDuplicatePhoneNumber(phoneNumber) ? "duplicate" : "unique"));
-        out.flush();
     }
 }

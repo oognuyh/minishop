@@ -33,7 +33,7 @@ public class SignInServlet extends HttpServlet {
         Optional<Member> memberOptional = memberService.signIn(id, password);
 
         if (memberOptional.isPresent()) {
-            session.setAttribute("member", gson.toJson(memberOptional.get(), Member.class));
+            session.setAttribute("member", memberOptional.get());
             response.sendRedirect(destination.equals(request.getRequestURL().toString()) ? Path.HOME : destination);
         } else {
             response.sendRedirect(destination);
