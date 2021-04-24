@@ -1,4 +1,0 @@
-driver: oracle.jdbc.driver.OracleDriver
-url: jdbc:oracle:thin:@oognuyh.tech:5521:xe
-username: SHOP
-password: SHOP
