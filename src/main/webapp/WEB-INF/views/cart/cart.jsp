@@ -2,13 +2,10 @@
 <!DOCTYPE html>
 <html>
     <!-- Common Head -->
-    <jsp:include page="common/head.jsp" />
-<body>
-    <jsp:include page="common/nav.jsp" />
-    <%
-        if (request.getAttribute("carts") == null)
-            response.sendRedirect("mycart.do");
-    %>
+    <jsp:include page="/WEB-INF/views/common/head.jsp" />
+<body class="vh-100">
+    <jsp:include page="/WEB-INF/views/common/nav.jsp" />
+
     <div id="app">
         <div class="container">
             <div class="row">
@@ -24,7 +21,7 @@
                                 <div class="col-md-5 col-lg-3 col-xl-3">
                                     <div class="mb-md-0 p-3">
                                         <img class="img-fluid w-100"
-                                             :src=`/images/goods/\${cart.gImage}.gif` alt="Sample">
+                                             :src=`/images/goods/\${cart.product.image}.gif` alt="Sample">
                                     </div>
                                 </div>
 
@@ -32,17 +29,17 @@
                                     <div>
                                         <div class="d-flex justify-content-between">
                                             <div>
-                                                <h5>{{ cart.gName }}</h5>
-                                                <p class="mb-2 text-muted text-uppercase small">Color: {{ cart.gColor }}</p>
-                                                <p class="mb-3 text-muted text-uppercase small">Size: {{ cart.gSize }}</p>
+                                                <h5>{{ cart.product.name }}</h5>
+                                                <p class="mb-2 text-muted text-uppercase small">Color: {{ cart.productColor }}</p>
+                                                <p class="mb-3 text-muted text-uppercase small">Size: {{ cart.productSize }}</p>
                                             </div>
                                             <div>
                                                 <div class="def-number-input number-input safari_only mb-0 w-100">
-                                                    <button @click="increaseGAmount(idx)" class="btn btn-light btn-sm">
+                                                    <button @click="increaseQuantity(idx)" class="btn btn-light btn-sm">
                                                         <i class="material-icons">arrow_drop_up</i>
                                                     </button>
-                                                    <input style="width: 50px" min="1" name="quantity" :value="cart.gAmount">
-                                                    <button @click="decreaseGAmount(idx)" class="btn btn-light btn-sm">
+                                                    <input style="width: 50px" min="1" name="quantity" :value="cart.productQuantity">
+                                                    <button @click="decreaseQuantity(idx)" class="btn btn-light btn-sm">
                                                         <i class="material-icons">arrow_drop_down</i>
                                                     </button>
                                                 </div>
@@ -53,7 +50,7 @@
                                                 <button class="btn btn-danger btn-sm text-uppercase mr-3" @click="removeCart(cart)">
                                                     <i class="material-icons" style="vertical-align: middle; padding-bottom: 3px">delete</i> Remove item </button>
                                             </div>
-                                            <p class="mb-0"><span><strong id="summary">&#8361; {{ cart.gPrice }}</strong></span></p>
+                                            <p class="mb-0"><span><strong id="summary">&#8361; {{ cart.product.price }}</strong></span></p>
                                         </div>
                                     </div>
                                 </div>
@@ -95,7 +92,7 @@
                             <ul class="list-group list-group-flush">
                                 <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
                                     Temporary amount
-                                    <span>&#8361; {{ getTotalAmount }}</span>
+                                    <span>&#8361; {{ getTotalPrice }}</span>
                                 </li>
                                 <li class="list-group-item d-flex justify-content-between align-items-center px-0">
                                     Shipping
@@ -108,7 +105,7 @@
                                             <p class="mb-0">(including VAT)</p>
                                         </strong>
                                     </div>
-                                    <span><strong>&#8361; {{ getTotalAmount }}</strong></span>
+                                    <span><strong>&#8361; {{ getTotalPrice }}</strong></span>
                                 </li>
                             </ul>
 
@@ -124,7 +121,9 @@
     </div>
 
     <script type="module">
-        const carts = JSON.parse('<%= request.getAttribute("carts") %>')
+        const carts = JSON.parse('<%= request.getAttribute("carts") %>');
+
+        console.log(carts);
 
         const app = new Vue({
             el: "#app",
@@ -132,51 +131,44 @@
                 carts: carts
             },
             computed: {
-                getTotalAmount: function () {
-                    return this.carts.length === 0 ? 0 : this.carts.map((cart) => cart.gPrice * cart.gAmount).reduce((acc, cur) => acc + cur);
+                getTotalPrice: function () {
+                    return this.carts.length === 0 ? 0 : this.carts.map((cart) => cart.product.price * cart.productQuantity).reduce((acc, cur) => acc + cur);
                 }
             },
             methods: { // TODO - should update database
-                increaseGAmount: function (idx) {
-                    this.carts[idx].gAmount++;
-                    $.post({
-                        url: "/mycart.do",
-                        data: {
-                            cart: JSON.stringify(this.carts[idx]),
-                            action: "update"
-                        },
-                        completed: ({responseText}) => {
-                            alert(responseText);
-                        }
+                increaseQuantity: function (idx) {
+                    this.carts[idx].productQuantity++;
+
+                    console.log(this.carts[idx]);
+
+                    fetch("/cart" , {
+                        method: "put",
+                        body: JSON.stringify(this.carts[idx])
                     })
+                    .then(response => response.text())
+                    .then(status => alert(status));
                 },
-                decreaseGAmount: function (idx) {
-                    if (this.carts[idx].gAmount >  1) {
-                        this.carts[idx].gAmount--;
-                        $.post({
-                            url: "/mycart.do",
-                            data: {
-                                cart: JSON.stringify(this.carts[idx]),
-                                action: "update"
-                            },
-                            completed: ({responseText}) => {
-                                alert(responseText);
-                            }
+                decreaseQuantity: function (idx) {
+                    if (this.carts[idx].productQuantity >  1) {
+                        this.carts[idx].productQuantity--;
+
+                        fetch("/cart" , {
+                            method: "put",
+                            body: JSON.stringify(this.carts[idx])
                         })
+                        .then(response => response.text())
+                        .then(status => alert(status));
                     }
                 },
                 removeCart: function (cart) {
                     this.carts = this.carts.filter((c) => c !== cart);
-                    $.post({
-                        url: "/mycart.do",
-                        data: {
-                            cart: JSON.stringify(cart),
-                            action: "delete"
-                        },
-                        completed: ({responseText}) => {
-                            alert(responseText);
-                        }
+
+                    fetch("/cart", {
+                        method: "delete",
+                        body: JSON.stringify(cart)
                     })
+                    .then(response => response.text())
+                    .then(status => alert(status));
                 },
                 moveToCheckOut: function () {
                     if (this.carts.length > 0) {
@@ -197,6 +189,5 @@
             }
         })
     </script>
-    <script src="${pageContext.request.contextPath}/webjars/vue/2.6.12/vue.min.js"></script>
 </body>
 </html>

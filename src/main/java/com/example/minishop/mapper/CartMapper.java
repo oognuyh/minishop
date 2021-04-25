@@ -1,10 +1,11 @@
 package com.example.minishop.mapper;
 
 import com.example.minishop.model.Cart;
+import com.example.minishop.model.Product;
 import org.apache.ibatis.annotations.*;
+import org.apache.ibatis.mapping.FetchType;
 
 import java.util.List;
-import java.util.Optional;
 
 @Mapper
 public interface CartMapper {
@@ -12,21 +13,31 @@ public interface CartMapper {
     @Select("select * from cart")
     List<Cart> findAllCarts();
 
-    @Select("select * from cart where userid = #{userid}")
-    List<Cart> findCartsByUserId(@Param("userid") String userid);
+    @Select("select * from cart where member_id = #{memberId}")
+    @Results({
+            @Result(property = "id", column = "id"),
+            @Result(property = "memberId", column = "member_id"),
+            @Result(property = "productId", column = "product_id"),
+            @Result(property = "productQuantity", column = "product_quantity"),
+            @Result(property = "productColor", column = "product_color"),
+            @Result(property = "productSize", column = "product_size"),
+            @Result(property = "product", column = "product_id",
+                    javaType = Product.class,
+                    one = @One(select = "com.example.minishop.mapper.ProductMapper.findProductById", fetchType = FetchType.EAGER))
+    })
+    List<Cart> findCartsByMemberId(@Param("memberId") int memberId);
 
-    @Select("select * from cart where userid = #{userid} and gcode = #{gCode} and gcolor = #{gColor} and gsize = #{gSize}")
-    Optional<Cart> findExistingCart(Cart cart);
+    @Insert("insert into cart (id, member_id, product_id, product_quantity, product_color, product_size) " +
+            "values (#{id}, #{memberId}, #{productId}, #{productQuantity}, #{productColor}, #{productSize})")
+    int insert(Cart cart);
 
     @Update("update cart set " +
-            "gamount = #{gAmount}" +
-            "where num = #{num}")
-    int updateGAmountByNum(@Param("num") int num, @Param("gAmount") int gAmount);
+            "product_quantity = #{productQuantity}, " +
+            "product_color = #{productColor}, " +
+            "product_size = #{productSize} " +
+            "where id = #{id}")
+    int update(Cart cart);
 
-    @Insert("insert into cart (num, userid, gcode, gname, gprice, gsize, gcolor, gamount, gimage) " +
-            "values (cart_seq.nextval, #{userid}, #{gCode}, #{gName}, #{gPrice}, #{gSize}, #{gColor}, #{gAmount}, #{gImage})")
-    int insertCart(Cart cart);
-
-    @Delete("delete from cart where num = #{num}")
-    int deleteCartByNum(@Param("num") int num);
+    @Delete("delete from cart where id = #{id}")
+    int delete(Cart cart);
 }

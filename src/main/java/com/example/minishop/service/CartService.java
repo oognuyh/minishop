@@ -3,71 +3,55 @@ package com.example.minishop.service;
 import com.example.minishop.dao.CartDao;
 import com.example.minishop.factory.OracleSqlSessionFactory;
 import com.example.minishop.model.Cart;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.SqlSession;
 
 import java.util.List;
-import java.util.Optional;
 
+@Slf4j
 public class CartService {
     private final CartDao cartDao = new CartDao();
 
-    public Optional<List<Cart>> findAllCarts() {
+    public List<Cart> findAllCarts() {
         try (SqlSession session = OracleSqlSessionFactory.getSession()) {
-          return Optional.ofNullable(cartDao.findAllCarts(session));
+            return cartDao.findAllCarts(session);
         }
     }
 
-    public Optional<List<Cart>> findCartsByUserId(String userid) {
+    public List<Cart> findCartsByMemberId(int memberId) {
         try (SqlSession session = OracleSqlSessionFactory.getSession()) {
-            return Optional.ofNullable(cartDao.findCartsByUserId(session, userid));
+            return cartDao.findCartsByMemberId(session, memberId);
         }
     }
 
-    public boolean insertCart(Cart cart) {
+    public boolean insert(Cart cart) {
         try (SqlSession session = OracleSqlSessionFactory.getSession()) {
-            Optional<Cart> existingCart = cartDao.findExistingCart(session, cart);
-
-            if (existingCart.isPresent()) {
-                if (cartDao.updateGAmountByNum(session, existingCart.get().getNum(), existingCart.get().getGAmount() + 1) == 1) {
-                    session.commit();
-                    return true;
-                } else {
-                    session.rollback();
-                    return false;
-                }
-            } else {
-                if (cartDao.insertCart(session, cart) == 1) {
-                    session.commit();
-                    return true;
-                } else {
-                    session.rollback();
-                    return false;
-                }
-            }
+            cartDao.insert(session, cart);
+            session.commit();
+            return true;
+        } catch (Exception e) {
+            log.info(e.getMessage());
+            return false;
         }
     }
 
-    public boolean deleteCartByNum(int num) {
+    public boolean update(Cart cart) {
         try (SqlSession session = OracleSqlSessionFactory.getSession()) {
-            if (cartDao.deleteCartByNum(session, num) == 1) {
-                session.commit();
-                return true;
-            } else {
-                session.rollback();
-                return false;
-            }
+            cartDao.update(session, cart);
+            session.commit();
+            return true;
+        } catch (Exception e) {
+            return false;
         }
     }
 
-    public boolean updateGAmountByNum(int num, int gAmount) {
+    public boolean delete(Cart cart) {
         try (SqlSession session = OracleSqlSessionFactory.getSession()) {
-            if (cartDao.updateGAmountByNum(session, num, gAmount) == 1) {
-                session.commit();
-                return true;
-            } else {
-                session.rollback();
-                return false;
-            }
+            cartDao.delete(session, cart);
+            session.commit();
+            return true;
+        } catch (Exception e) {
+            return false;
         }
     }
 }

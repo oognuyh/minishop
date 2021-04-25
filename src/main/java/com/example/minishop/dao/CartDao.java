@@ -5,7 +5,6 @@ import com.example.minishop.model.Cart;
 import org.apache.ibatis.session.SqlSession;
 
 import java.util.List;
-import java.util.Optional;
 
 public class CartDao {
 
@@ -13,23 +12,19 @@ public class CartDao {
         return session.getMapper(CartMapper.class).findAllCarts();
     }
 
-    public List<Cart> findCartsByUserId(SqlSession session, String userid) {
-        return session.getMapper(CartMapper.class).findCartsByUserId(userid);
+    public List<Cart> findCartsByMemberId(SqlSession session, int memberId) {
+        return session.getMapper(CartMapper.class).findCartsByMemberId(memberId);
     }
 
-    public Optional<Cart> findExistingCart(SqlSession session, Cart cart) {
-        return session.getMapper(CartMapper.class).findExistingCart(cart);
+    public int insert(SqlSession session, Cart cart) {
+        return session.getMapper(CartMapper.class).insert(cart);
     }
 
-    public int insertCart(SqlSession session, Cart cart) {
-        return session.getMapper(CartMapper.class).insertCart(cart);
+    public int update(SqlSession session, Cart cart) {
+        return session.getMapper(CartMapper.class).update(cart);
     }
 
-    public int updateGAmountByNum(SqlSession session, int num, int gAmount) {
-        return session.getMapper(CartMapper.class).updateGAmountByNum(num, gAmount);
-    }
-
-    public int deleteCartByNum(SqlSession session, int num) {
-        return session.getMapper(CartMapper.class).deleteCartByNum(num);
+    public int delete(SqlSession session, Cart cart) {
+        return session.getMapper(CartMapper.class).delete(cart);
     }
 }
