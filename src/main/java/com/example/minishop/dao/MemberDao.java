@@ -8,19 +8,27 @@ import java.util.Optional;
 
 public class MemberDao {
 
-    public int insertMember(SqlSession session, Member member) {
-        return session.getMapper(MemberMapper.class).insertMember(member);
+    public Optional<Member> findMemberByEmailAndPassword(SqlSession session, String email, String password) {
+        return session.getMapper(MemberMapper.class).findMemberByEmailAndPassword(email, password);
     }
 
-    public int countMembersById(SqlSession session, String userid) {
-        return session.getMapper(MemberMapper.class).countMembersById(userid);
+    public Optional<Member> findMemberByPhoneNumberAndPassword(SqlSession session, String phoneNumber, String password) {
+        return session.getMapper(MemberMapper.class).findMemberByPhoneNumberAndPassword(phoneNumber, password);
     }
 
-    public int updateMember(SqlSession session, Member member) {
-        return session.getMapper(MemberMapper.class).updateMember(member);
+    public int findMemberByEmail(SqlSession session, String email) {
+        return session.getMapper(MemberMapper.class).findMemberByEmail(email);
     }
 
-    public Optional<Member> findMemberByIdAndPasswd(SqlSession session, String userid, String passwd) {
-        return session.getMapper(MemberMapper.class).findMemberByIdAndPasswd(userid, passwd);
+    public int findMemberByPhoneNumber(SqlSession session, String phoneNumber) {
+        return session.getMapper(MemberMapper.class).findMemberByPhoneNumber(phoneNumber);
+    }
+
+    public int insert(SqlSession session, Member member) {
+        return session.getMapper(MemberMapper.class).insert(member);
+    }
+
+    public int update(SqlSession session, Member member) {
+        return session.getMapper(MemberMapper.class).update(member);
     }
 }
