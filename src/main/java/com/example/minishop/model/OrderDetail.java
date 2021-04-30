@@ -22,7 +22,7 @@ public class OrderDetail {
     private int productId;
 
     // 상품 수량
-    private String productQuantitiy;
+    private int productQuantity;
 
     // 상품 색상
     private String productColor;
