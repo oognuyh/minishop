@@ -74,7 +74,7 @@ public interface MemberMapper {
             "zip = #{zip}, " +
             "address1 = #{address1}, " +
             "address2 = #{address2}, " +
-            "updated_at = #{updated_at}, " +
+            "updated_at = #{updatedAt} " +
             "where id = #{id}")
     int update(Member member);
 }
