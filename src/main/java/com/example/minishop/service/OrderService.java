@@ -1,36 +1,50 @@
 package com.example.minishop.service;
 
 import com.example.minishop.dao.OrderDao;
+import com.example.minishop.dao.OrderDetailDao;
 import com.example.minishop.factory.OracleSqlSessionFactory;
 import com.example.minishop.model.Order;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.SqlSession;
 
 import java.util.List;
 
+@Slf4j
 public class OrderService {
     private final OrderDao orderDao = new OrderDao();
+    private final OrderDetailDao orderDetailDao = new OrderDetailDao();
 
-    public List<Order> findAllOrders() {
+    public List<Order> findOrderByMemberId(int memberId) {
         try (SqlSession session = OracleSqlSessionFactory.getSession()) {
-            return orderDao.findAllOrders(session);
+            return orderDao.findOrdersByMemberId(session, memberId);
+        } catch (Exception e) {
+            log.info(e.getMessage());
+            return null;
         }
     }
 
-    public List<Order> findOrdersByUserId(String userid) {
+    public boolean insert(Order order) {
         try (SqlSession session = OracleSqlSessionFactory.getSession()) {
-            return orderDao.findOrdersByUserId(session, userid);
-        }
-    }
+            orderDao.insert(session, order);
 
-    public boolean insertOrder(Order order) {
-        try (SqlSession session = OracleSqlSessionFactory.getSession()) {
-            if (orderDao.insertOrder(session, order) == 1) {
-                session.commit();
-                return true;
-            } else {
-                session.rollback();
-                return false;
-            }
+            // session.commit();
+
+            log.info("order : {}", order);
+
+            order.getOrderDetails().forEach(orderDetail -> {
+                orderDetail.setOrderId(order.getId());
+
+                log.error("orderId: {}", order.getId());
+                log.error("orderDetail : {}", orderDetail);
+
+                orderDetailDao.insert(session, orderDetail);
+            });
+
+            session.commit();
+            return true;
+        } catch (Exception e) {
+            log.info(e.getMessage());
+            return false;
         }
     }
 }

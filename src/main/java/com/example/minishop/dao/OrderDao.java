@@ -8,15 +8,11 @@ import java.util.List;
 
 public class OrderDao {
 
-    public List<Order> findAllOrders(SqlSession session) {
-        return session.getMapper(OrderMapper.class).findAllOrders();
+    public List<Order> findOrdersByMemberId(SqlSession session, int memberId) throws Exception {
+        return session.getMapper(OrderMapper.class).findOrdersByMemberId(memberId);
     }
 
-    public List<Order> findOrdersByUserId(SqlSession session, String userid) {
-        return  session.getMapper(OrderMapper.class).findOrdersByUserId(userid);
-    }
-
-    public int insertOrder(SqlSession session, Order order) {
-        return session.getMapper(OrderMapper.class).insertOrders(order);
+    public int insert(SqlSession session, Order order) throws Exception {
+        return session.getMapper(OrderMapper.class).insert(order);
     }
 }

@@ -2,10 +2,11 @@ package com.example.minishop.controller.order;
 
 import com.example.minishop.model.Member;
 import com.example.minishop.model.Order;
-import com.example.minishop.service.CartService;
 import com.example.minishop.service.OrderService;
+import com.example.minishop.util.Path;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -18,39 +19,41 @@ import java.io.PrintWriter;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
-@WebServlet("/order.do")
+@Slf4j
+@WebServlet("/order")
 public class OrderServlet extends HttpServlet {
     private final OrderService orderService = new OrderService();
-    private final CartService cartService = new CartService();
+    private final Gson gson = new Gson();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
-        Gson gson = new Gson();
-        Optional<Member> member = Optional.ofNullable((Member) session.getAttribute("member"));
+        Optional<Member> optionalMember = Optional.ofNullable((Member) session.getAttribute("member"));
+        if (optionalMember.isEmpty()) request.getRequestDispatcher(Path.SIGN_IN_VIEW).forward(request, response);
+        else {
+            Type type = new TypeToken<List<Order>>(){}.getType();
 
-        if (member.isPresent()) {
-            request.setAttribute("orders", gson.toJson(orderService.findOrdersByUserId(member.get().getUserid())));
-            request.getRequestDispatcher("/order.jsp").forward(request, response);
-        } else {
-            request.getRequestDispatcher("/signin.do").forward(request, response);
+            log.error("{}", orderService.findOrderByMemberId(optionalMember.get().getId()));
+            
+            request.setAttribute("orders", gson.toJson(orderService.findOrderByMemberId(optionalMember.get().getId()), type));
+            request.getRequestDispatcher(Path.ORDER_VIEW).forward(request, response);
         }
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Gson gson = new Gson();
+        HttpSession session = request.getSession();
+        Order order = gson.fromJson(request.getReader().lines().collect(Collectors.joining()), Order.class);
         PrintWriter out = response.getWriter();
-        Type type = new TypeToken<List<Order>>(){}.getType();
-        List<Order> orders = gson.fromJson(request.getParameter("orders"), type);
 
-        orders.forEach(order -> {
-            if (order.getNum() != 0)
-                cartService.deleteCartByNum(order.getNum());
-            orderService.insertOrder(order);
-        });
+        session.removeAttribute("order");
 
-        out.print("Successfully ordered");
+        log.info("{}", order);
+
+        orderService.insert(order);
+
+        out.print("success");
     }
 }
