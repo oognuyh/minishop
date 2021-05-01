@@ -1,4 +1,5 @@
 <%@ page import="com.example.minishop.model.Member" %>
+<%@ page import="com.google.gson.Gson" %>
 <nav id="nav" class="navbar navbar-expand-lg navbar-dark bg-dark" v-cloak>
     <!-- brand -->
     <a class="navbar-brand" href="${pageContext.request.contextPath}/home">MiniShop</a>
@@ -50,7 +51,7 @@
 
 <!-- Check -->
 <script type="module">
-    const member = JSON.parse('<%= session.getAttribute("member") %>');
+    const member = JSON.parse('<%= new Gson().toJson(session.getAttribute("member"), Member.class) %>');
 
     const nav = new Vue({
         el: "#nav",

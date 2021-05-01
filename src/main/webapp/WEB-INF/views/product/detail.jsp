@@ -140,7 +140,8 @@
                     productQuantity: 1,
                     productColor: "black",
                     productSize: "S",
-                    productId: product.id
+                    productId: product.id,
+                    product: product
                 }
             },
             methods: {
@@ -151,10 +152,6 @@
                     this.cart.productQuantity > 1 && this.cart.productQuantity--;
                 },
                 addToCart: function () {
-                    console.log(this.cart);
-
-
-
                     fetch("/cart", {
                         method: "post",
                         body: JSON.stringify(this.cart)
@@ -163,16 +160,19 @@
                     .then(stauts => alert(stauts));
                 },
                 buy: function () {
-                    $.post({
-                        url: "/checkout.do",
-                        data: {
-                            carts: JSON.stringify([this.goods])
-                        },
-                        complete: ({responseText}) => {
-                            if (responseText === "success")
-                                location.href = '/checkout.do';
-                        }
+                    fetch("/checkout", {
+                        method: "post",
+                        body: JSON.stringify([this.cart])
                     })
+                    .then(response => response.text())
+                    .then(status => {
+                        if (status === "signin")
+                            location.href = "/signin";
+                        else if (status === "success")
+                            location.href = "/checkout";
+                        else
+                            alert(status);
+                    });
                 }
             }
         })

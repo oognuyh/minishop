@@ -109,7 +109,7 @@
                                 </li>
                             </ul>
 
-                            <button type="button" class="btn btn-primary btn-block text-uppercase" @click="moveToCheckOut">
+                            <button type="button" class="btn btn-primary btn-block text-uppercase" @click="moveToCheckout">
                                 <strong>go to checkout</strong>
                             </button>
 
@@ -135,7 +135,7 @@
                     return this.carts.length === 0 ? 0 : this.carts.map((cart) => cart.product.price * cart.productQuantity).reduce((acc, cur) => acc + cur);
                 }
             },
-            methods: { // TODO - should update database
+            methods: {
                 increaseQuantity: function (idx) {
                     this.carts[idx].productQuantity++;
 
@@ -146,7 +146,7 @@
                         body: JSON.stringify(this.carts[idx])
                     })
                     .then(response => response.text())
-                    .then(status => alert(status));
+                    .then(status => console.log(status));
                 },
                 decreaseQuantity: function (idx) {
                     if (this.carts[idx].productQuantity >  1) {
@@ -157,7 +157,7 @@
                             body: JSON.stringify(this.carts[idx])
                         })
                         .then(response => response.text())
-                        .then(status => alert(status));
+                        .then(status => console.log(status));
                     }
                 },
                 removeCart: function (cart) {
@@ -170,18 +170,21 @@
                     .then(response => response.text())
                     .then(status => alert(status));
                 },
-                moveToCheckOut: function () {
+                moveToCheckout: function () {
                     if (this.carts.length > 0) {
-                        $.post({
-                            url: "/checkout.do",
-                            data: {
-                                carts: JSON.stringify(carts)
-                            },
-                            complete: ({responseText}) => {
-                                if (responseText === "success")
-                                    location.href = "/checkout.do";
-                            }
+                        fetch("/checkout", {
+                            method: "post",
+                            body: JSON.stringify(this.carts)
                         })
+                        .then(response => response.text())
+                        .then(status => {
+                            if (status === "success")
+                                location.href = "/checkout";
+                            else if (status === "signin")
+                                location.href = "/signin";
+                            else
+                                alert(status);
+                        });
                     } else {
                         alert("Your cart is empty.")
                     }

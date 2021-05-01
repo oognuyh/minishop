@@ -6,7 +6,7 @@
 <body>
     <jsp:include page="/WEB-INF/views/common/nav.jsp" />
 
-    <div id="app">
+    <div id="app" v-cloak>
         <div class="container">
             <div class="row py-5 mt-4 align-items-center justify-content-center">
 
